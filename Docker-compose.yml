@@ -8,3 +8,8 @@ services:
       - .:/code
     ports:
       - "8000:8000"
+
+  db:
+    image: postgres:17 
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
