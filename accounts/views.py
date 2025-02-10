@@ -1,11 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views.decorators.csrf import csrf_exempt
 from .serializers import UserSerializer
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
+from .custompermission import IsOwner
+
 
 class OTPSignView(APIView):
     permission_classes = [AllowAny]
@@ -40,7 +42,7 @@ class OTPSignView(APIView):
         )
                
 class UserListView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter,OrderingFilter]
     search_fields = ['phone','username']
     ordering_fields = ['phone','username']
@@ -69,7 +71,7 @@ class UserListView(APIView):
         )    
     
 class UserDetailView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     
     @csrf_exempt
     def get(self, request, pk):
@@ -86,7 +88,7 @@ class UserDetailView(APIView):
         )
   
 class UserUpdateView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated,IsOwner]
     
     @csrf_exempt
     def patch(self, request, pk):
