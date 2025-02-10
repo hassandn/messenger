@@ -69,3 +69,19 @@ class UserListView(APIView):
             status=200
         )    
     
+class UserDetailView(APIView):
+    permission_classes = [AllowAny]
+    
+    @csrf_exempt
+    def get(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise FileNotFoundError(detail = 'user not found')
+        
+        
+        seriliazer = UserSerializer(user)
+        return Response(
+            {'user': seriliazer.data},
+            status=200
+        )
