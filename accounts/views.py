@@ -13,11 +13,21 @@ class OTPSignView(APIView):
     def post(self, request):
         phone = request.data.get('phone')
         otp = request.data.get('otp')
+        username = request.data.get('username','')
+        first_name = request.data.get('first_name','')
+        last_name = request.data.get('last_name','')
+        profile_picture = request.FILES.get('profile_picture',None)
         
         user = User.objects.filter(phone=phone).first()
         
         if not user and otp == '1234':
-            user = User(phone=phone)
+            user = User(phone=phone,
+                        username=username,
+                        first_name=first_name,
+                        last_name=last_name,
+                        profile_picture=profile_picture
+            )
+            user.set_password("1")
             user.save()
             
         
