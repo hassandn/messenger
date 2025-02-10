@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Chat(models.Model):
@@ -28,3 +29,13 @@ class Message(models.Model):
     def get_receiver(self):
         """تشخیص گیرنده پیام از روی چت"""
         return self.chat.get_other_user(self.sender)
+
+    def clean(self):
+        # چک می‌کنیم که ارسال‌کننده جزو کاربران چت باشد
+        if self.sender not in [self.chat.user1, self.chat.user2]:
+            raise ValidationError("Sender must be part of the chat")
+
+    def save(self, *args, **kwargs):
+        # قبل از ذخیره پیام، از متد clean استفاده می‌کنیم
+        self.clean()
+        super().save(*args, **kwargs)
