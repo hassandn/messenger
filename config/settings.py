@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     
     #apps
     "accounts",
+    "chat",
+    
     
     
     #libraries
