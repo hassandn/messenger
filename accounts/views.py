@@ -38,12 +38,11 @@ class OTPSignView(APIView):
         return Response(status=
             400
         )
-        
-        
+               
 class UserListView(APIView):
     permission_classes = [AllowAny]
     filter_backends = [SearchFilter,OrderingFilter]
-    search_fields = ['phone']
+    search_fields = ['phone','username']
     ordering_fields = ['phone','username']
     ordering = ['-date_joined']
         
@@ -85,3 +84,27 @@ class UserDetailView(APIView):
             {'user': seriliazer.data},
             status=200
         )
+  
+class UserUpdateView(APIView):
+    permission_classes = [AllowAny]
+    
+    @csrf_exempt
+    def patch(self, request, pk):
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            raise FileNotFoundError(detail = 'user not found')
+        
+        user.username = request.data.get('username', user.username)
+        user.first_name = request.data.get('first_name', user.first_name)
+        user.last_name = request.data.get('last_name', user.last_name)
+        user.profile_picture = request.FILES.get('profile_picture', user.profile_picture)
+        
+        user.save()
+        
+        seriliazer = UserSerializer(user)
+        return Response(
+            {'user': seriliazer.data},
+            status=200
+        )
+      
