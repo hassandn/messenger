@@ -4,8 +4,8 @@ from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Chat(models.Model):
-    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
-    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1',unique=True)
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2',unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -14,6 +14,7 @@ class Chat(models.Model):
     def get_other_user(self, user):
         return self.user2 if self.user1 == user else self.user1
     
+
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name="messages")
