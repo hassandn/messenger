@@ -1,3 +1,5 @@
 venv/
 db.sqlite3
 media/profiles/*
+*/migrations/
+*/__pycache__/

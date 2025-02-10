@@ -1,4 +1,4 @@
-version: '27.5.1'
+# version: '27.5.1'
 
 services:
   web:
