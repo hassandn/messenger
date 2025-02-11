@@ -2,23 +2,39 @@ from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound
-from rest_framework.parsers import JSONParser
+from rest_framework.pagination import PageNumberPagination
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from .models import Chat, Message
 from .serializers import ChatSerializer, MessageSerializer
 from accounts.models import User
+
 class UserChatsListView(APIView):
     permission_classes = [IsAuthenticated]
-
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['user1', 'user2']
+    ordering_fields = ['created_at', 'user1', 'user2']
+    ordering = ['-created_at']
+    
     def get(self, request):
         user = request.user
         chats = Chat.objects.filter(user1=user) | Chat.objects.filter(user2=user)
-        serializer = ChatSerializer(chats, many=True, context={'request': request})  
-        return Response(serializer.data, status=200)
+        search_query = request.query_params.get('search', None)
+        if search_query:
+            chats = chats.filter(
+                Q(user1__username__icontains=search_query) |
+                Q(user2__username__icontains=search_query) 
+            )
+
+            paginator = PageNumberPagination()
+            paginator.page_size = 10
+            paginated_chats = paginator.paginate_queryset(chats, request)    
+            
+            
+        serializer = ChatSerializer(paginated_chats, many=True, context={'request': request})  
+        return paginator.get_paginated_response(serializer.data)
     
 class UserChatDetailView(APIView):
     permission_classes = [IsAuthenticated]
