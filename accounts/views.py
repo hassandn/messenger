@@ -75,6 +75,26 @@ class OTPSignView(APIView):
         )
                
 class UserListView(APIView):
+    """
+    این API برای نمایش لیست کاربران استفاده می‌شود.
+
+    نکات:
+    1. دسترسی فقط برای کاربران احراز هویت شده ممکن است.
+    2. قابلیت جستجو بر اساس `phone` و `username` وجود دارد.
+    3. امکان مرتب‌سازی لیست بر اساس `phone` و `username` فراهم شده است.
+    4. کاربران بر اساس `date_joined` به‌صورت پیش‌فرض به ترتیب نزولی مرتب می‌شوند.
+    5. داده‌ها به‌صورت صفحه‌بندی شده برگردانده می‌شوند (هر صفحه شامل ۱۰ کاربر است).
+
+    **نمونه درخواست (Query Parameters - Optional):**
+    ```
+    GET /api/users/?search=username_example
+    GET /api/users/?ordering=phone
+    GET /api/users/?ordering=-username
+    ```
+    """
+    
+    
+    
     permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter,OrderingFilter]
     search_fields = ['phone','username']
