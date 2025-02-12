@@ -52,9 +52,9 @@ class OTPSignView(APIView):
         last_name = request.data.get("last_name", "")
         profile_picture = request.FILES.get("profile_picture", None)
 
-        user = User.objects.filter(phone=phone).first()
+        user = User.objects.filter(phone=phone).first() # get user by phone number
 
-        if not user and otp == "1234":
+        if not user and otp == "1234": # check if user not exist and otp is correct
             user = User(
                 phone=phone,
                 username=username,
@@ -62,16 +62,16 @@ class OTPSignView(APIView):
                 last_name=last_name,
                 profile_picture=profile_picture,
             )
-            user.set_password("1")
+            user.set_password("1") # set default password
             user.save()
 
             return Response(
                 {
                     "message": "user created successfully",
                 },
-                status=200,
+                status=200,# return 200 status code
             )
-        return Response(status=400)
+        return Response(status=400)# return 400 status code
 
 
 class UserListView(APIView):
@@ -102,13 +102,13 @@ class UserListView(APIView):
     def get(self, request):
         users = User.objects.all()
 
-        search_phone = request.GET.get("search", None)
-        search_username = request.GET.get("search", None)
+        search_phone = request.GET.get("search", None)# get search_phone from query parameters
+        search_username = request.GET.get("search", None)# get search_username from query parameters
 
-        if search_username:
+        if search_username:# check if search_username is not None
             users = users.filter(username=search_username)
 
-        if search_phone:
+        if search_phone:# check if search_phone is not None
             users = users.filter(phone=search_phone)
 
         paginator = PageNumberPagination()
@@ -136,9 +136,8 @@ class UserDetailView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    @csrf_exempt
     def get(self, request, pk):
-        try:
+        try:# try to get user by id
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:
             raise FileNotFoundError(detail="user not found")
@@ -169,7 +168,6 @@ class UserUpdateView(APIView):
 
     permission_classes = [IsAuthenticated, IsOwner]
 
-    @csrf_exempt
     def patch(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
