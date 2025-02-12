@@ -12,6 +12,20 @@ from .serializers import ChatSerializer, MessageSerializer
 from accounts.models import User
 
 class UserChatsListView(APIView):
+    """
+      دریافت لیست چت‌های کاربر.
+
+    نکات:
+    1. فقط چت‌هایی که کاربر در آن‌ها عضو است نمایش داده می‌شوند.
+    2. امکان جستجو بر اساس نام کاربری یکی از طرفین چت وجود دارد.
+    3. چت‌ها به‌صورت پیش‌فرض بر اساس تاریخ ایجاد مرتب‌سازی می‌شوند.
+    4. قابلیت صفحه‌بندی برای نمایش تعداد مشخصی از چت‌ها در هر درخواست وجود دارد.
+
+    نمونه درخواست:
+    ```
+    GET /api/chat/user-chats/?search=johndoe
+    ```
+    """
     permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['user1', 'user2']
