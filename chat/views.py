@@ -51,6 +51,24 @@ class UserChatsListView(APIView):
         return paginator.get_paginated_response(serializer.data)
     
 class UserChatDetailView(APIView):
+    
+    """
+    دریافت پیام‌های یک چت بین دو کاربر خاص.
+
+    نکات:
+    1. در این درخواست، کاربر باید نام کاربری طرف مقابل چت را ارسال کند.
+    2. در صورت یافت نشدن کاربر، خطای 404 برمی‌گردد.
+    3. پیام‌ها از چت‌های موجود بین کاربر درخواست‌دهنده و کاربر هدف بازیابی می‌شوند.
+    4. پیام‌ها به‌صورت پیش‌فرض در ترتیب زمان دریافت شده نمایش داده می‌شوند.
+
+    نمونه درخواست:
+    ```
+    POST /api/chat/user-chat-detail/
+    {
+        "username": "janedoe"
+    }
+    ```
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
