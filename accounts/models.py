@@ -1,11 +1,16 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone, username=None, password=None):
         if not phone:
             raise ValueError("phone number is necessary")
-        
+
         user = self.model(phone=phone, username=username)
         user.set_password(password)
         user.save(using=self._db)
@@ -13,7 +18,7 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, phone=None, username=None, password=None):
         if not username:
-            username = 'admin'  # یا هر مقدار پیش‌فرض دیگری که بخواهید
+            username = "admin"  # default username for superuser
         if not password:
             raise ValueError("رمز عبور الزامی است")
 
