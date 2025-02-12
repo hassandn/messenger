@@ -10,8 +10,41 @@ from .custompermission import IsOwner
 
 
 class OTPSignView(APIView):
+    """
+    برای ثبت نام کاربران است
+    نکات:
+    1.otp باید برابر با 1234 باشد
+    2.اگر کاربر وجود نداشته باشد کاربر ساخته میشود
+    3.پسورد پیش فرض برای همه کاربران 1 است
+    4.ورودی های مورد نیاز برای ثبت نام به صورت زیر است:
+    +احباری
+    -phone
+    -otp
+    +اختیاری
+    -username
+    -first_name
+    -last_name
+    -profile_picture
+    5.خروجی ها:
+    - 201 : در صورت ساخته با موفقیت ساخته شدن کاربر
+    - 400 : در صورت وجود کاربر یا ارسال otp اشتباه یا خطاهای دیگر
+    
+    
+        **نمونه درخواست (JSON Input):**
+    json
+    {
+        "phone": "09123456789",
+        "otp": "1234",
+        "username": "hassan_dn",
+        "first_name": "Hassan",
+        "last_name": "Dehghan",
+        "profile_picture": "profile.jpg"
+    }
+    """
+    
     permission_classes = [AllowAny]
-    @csrf_exempt
+    
+    
     def post(self, request):
         phone = request.data.get('phone')
         otp = request.data.get('otp')
