@@ -124,6 +124,21 @@ class UserListView(APIView):
         )    
     
 class UserDetailView(APIView):
+    """
+     این API برای دریافت جزئیات یک کاربر خاص بر اساس `id` استفاده می‌شود.
+
+    نکات:
+    1. دسترسی فقط برای کاربران احراز هویت شده ممکن است.
+    2. مقدار `id` کاربر به‌عنوان پارامتر در URL ارسال می‌شود.
+    3. در صورت یافت نشدن کاربر، پاسخ `404 Not Found` برگردانده می‌شود.
+
+    **نمونه درخواست (Request):**
+    ```
+    GET /api/users/1/
+    ```
+    """
+    
+    
     permission_classes = [IsAuthenticated]
     
     @csrf_exempt
