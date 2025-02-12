@@ -156,6 +156,26 @@ class UserDetailView(APIView):
         )
   
 class UserUpdateView(APIView):
+    """
+    بروزرسانی اطلاعات یک کاربر بر اساس شناسه (ID).
+    
+    نکات:
+    1. تنها مالک حساب کاربری می‌تواند اطلاعات خود را تغییر دهد.
+    2. در صورت عدم وجود کاربر، خطای 404 بازگردانده می‌شود.
+    3. فیلدهای `username`، `first_name`، `last_name` و `profile_picture` قابل بروزرسانی هستند.
+    
+    نمونه درخواست:
+    ```json
+    {
+        "username": "new_username",
+        "first_name": "John",
+        "last_name": "Doe",
+        "profile_picture": "file"
+    }
+    ```
+    """
+    
+    
     permission_classes = [IsAuthenticated,IsOwner]
     
     @csrf_exempt
