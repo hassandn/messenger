@@ -3,14 +3,13 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.urls import path
 
-# تعریف schema view برای Swagger
 schema_view = get_schema_view(
     openapi.Info(
         title="messenger API",
         default_version='v1',
-        description="Description of your API",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@yourdomain.com"),
+        description="this is messenger api",
+        terms_of_service="meow",
+        contact=openapi.Contact(email="hassandn6350@gmail.com"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,
