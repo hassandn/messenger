@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     "channels",
     "channels_redis",
+    "drf_yasg"
 ]
 
 ASGI_APPLICATION = 'config.asgi.application'
