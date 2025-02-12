@@ -28,8 +28,8 @@ class OTPSignView(APIView):
     5.خروجی ها:
     - 201 : در صورت ساخته با موفقیت ساخته شدن کاربر
     - 400 : در صورت وجود کاربر یا ارسال otp اشتباه یا خطاهای دیگر
-    
-    
+
+
         **نمونه درخواست (JSON Input):**
     json
     {
@@ -41,39 +41,39 @@ class OTPSignView(APIView):
         "profile_picture": "profile.jpg"
     }
     """
-    
+
     permission_classes = [AllowAny]
-    
-    
+
     def post(self, request):
-        phone = request.data.get('phone')
-        otp = request.data.get('otp')
-        username = request.data.get('username','')
-        first_name = request.data.get('first_name','')
-        last_name = request.data.get('last_name','')
-        profile_picture = request.FILES.get('profile_picture',None)
-        
+        phone = request.data.get("phone")
+        otp = request.data.get("otp")
+        username = request.data.get("username", "")
+        first_name = request.data.get("first_name", "")
+        last_name = request.data.get("last_name", "")
+        profile_picture = request.FILES.get("profile_picture", None)
+
         user = User.objects.filter(phone=phone).first()
-        
-        if not user and otp == '1234':
-            user = User(phone=phone,
-                        username=username,
-                        first_name=first_name,
-                        last_name=last_name,
-                        profile_picture=profile_picture
+
+        if not user and otp == "1234":
+            user = User(
+                phone=phone,
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                profile_picture=profile_picture,
             )
             user.set_password("1")
             user.save()
-            
-        
+
             return Response(
-                {'message': 'user created successfully',
-                },status=200
+                {
+                    "message": "user created successfully",
+                },
+                status=200,
             )
-        return Response(status=
-            400
-        )
-               
+        return Response(status=400)
+
+
 class UserListView(APIView):
     """
     این API برای نمایش لیست کاربران استفاده می‌شود.
@@ -92,37 +92,33 @@ class UserListView(APIView):
     GET /api/users/?ordering=-username
     ```
     """
-    
-    
-    
+
     permission_classes = [IsAuthenticated]
-    filter_backends = [SearchFilter,OrderingFilter]
-    search_fields = ['phone','username']
-    ordering_fields = ['phone','username']
-    ordering = ['-date_joined']
-        
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ["phone", "username"]
+    ordering_fields = ["phone", "username"]
+    ordering = ["-date_joined"]
+
     def get(self, request):
         users = User.objects.all()
-        
-        search_phone =request.GET.get('search', None)
-        search_username = request.GET.get('search', None)
-        
+
+        search_phone = request.GET.get("search", None)
+        search_username = request.GET.get("search", None)
+
         if search_username:
             users = users.filter(username=search_username)
-        
+
         if search_phone:
             users = users.filter(phone=search_phone)
-        
+
         paginator = PageNumberPagination()
         paginator.page_size = 10
         paginated_users = paginator.paginate_queryset(users, request)
-        
+
         serializer = UserSerializer(paginated_users, many=True)
-        return Response(
-            {'users': serializer.data},
-            status=200
-        )    
-    
+        return Response({"users": serializer.data}, status=200)
+
+
 class UserDetailView(APIView):
     """
      این API برای دریافت جزئیات یک کاربر خاص بر اساس `id` استفاده می‌شود.
@@ -137,33 +133,29 @@ class UserDetailView(APIView):
     GET /api/users/1/
     ```
     """
-    
-    
+
     permission_classes = [IsAuthenticated]
-    
+
     @csrf_exempt
     def get(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:
-            raise FileNotFoundError(detail = 'user not found')
-        
-        
+            raise FileNotFoundError(detail="user not found")
+
         seriliazer = UserSerializer(user)
-        return Response(
-            {'user': seriliazer.data},
-            status=200
-        )
-  
+        return Response({"user": seriliazer.data}, status=200)
+
+
 class UserUpdateView(APIView):
     """
     بروزرسانی اطلاعات یک کاربر بر اساس شناسه (ID).
-    
+
     نکات:
     1. تنها مالک حساب کاربری می‌تواند اطلاعات خود را تغییر دهد.
     2. در صورت عدم وجود کاربر، خطای 404 بازگردانده می‌شود.
     3. فیلدهای `username`، `first_name`، `last_name` و `profile_picture` قابل بروزرسانی هستند.
-    
+
     نمونه درخواست:
     ```json
     {
@@ -174,27 +166,24 @@ class UserUpdateView(APIView):
     }
     ```
     """
-    
-    
-    permission_classes = [IsAuthenticated,IsOwner]
-    
+
+    permission_classes = [IsAuthenticated, IsOwner]
+
     @csrf_exempt
     def patch(self, request, pk):
         try:
             user = User.objects.get(pk=pk)
         except User.DoesNotExist:
-            raise FileNotFoundError(detail = 'user not found')
-        
-        user.username = request.data.get('username', user.username)
-        user.first_name = request.data.get('first_name', user.first_name)
-        user.last_name = request.data.get('last_name', user.last_name)
-        user.profile_picture = request.FILES.get('profile_picture', user.profile_picture)
-        
-        user.save()
-        
-        seriliazer = UserSerializer(user)
-        return Response(
-            {'user': seriliazer.data},
-            status=200
+            raise FileNotFoundError(detail="user not found")
+
+        user.username = request.data.get("username", user.username)
+        user.first_name = request.data.get("first_name", user.first_name)
+        user.last_name = request.data.get("last_name", user.last_name)
+        user.profile_picture = request.FILES.get(
+            "profile_picture", user.profile_picture
         )
-      
+
+        user.save()
+
+        seriliazer = UserSerializer(user)
+        return Response({"user": seriliazer.data}, status=200)
