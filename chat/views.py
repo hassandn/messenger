@@ -90,6 +90,23 @@ class UserChatDetailView(APIView):
 
 
 class CreateChatView(APIView):
+    """
+        ایجاد چت جدید بین دو کاربر.
+
+    نکات:
+    1. در این درخواست، نام کاربری طرف مقابل (گیرنده) باید ارسال شود.
+    2. اگر چت قبلاً بین دو کاربر وجود داشته باشد، چت جدیدی ایجاد نمی‌شود و چت قبلی بازیابی می‌شود.
+    3. در صورت موفقیت، جزئیات چت جدید یا موجود برگردانده می‌شود.
+
+    نمونه درخواست:
+    ```
+    POST /api/chat/create-chat/
+    {
+        "receiver_username": "janedoe"
+    }
+    ```
+    """
+    
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
